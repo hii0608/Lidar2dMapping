@@ -38,20 +38,19 @@ class AnimationWidget(QWidget):
     def __init__(self):
         QMainWindow.__init__(self)
         vbox = QVBoxLayout()
-        
+
+        self.fig = plt.figure(figsize=(6, 10))
+
         ang, dist = file_read("lidar01.csv")
         ox = np.sin(ang) * dist
         oy = np.cos(ang) * dist
-
-
-        self.fig = plt.figure(figsize=(6, 10))
 
         plt.plot([oy, np.zeros(np.size(oy))], [ox, np.zeros(np.size(oy))], "ro-")  # lines from 0,0 to the
         plt.axis("equal")
         bottom, top = plt.ylim()  # return the current ylim
         plt.ylim((top, bottom))  # rescale y axis, to match the grid orientation
         plt.grid(True)
-     #   plt.show()
+        plt.show()
 
         self.canvas = FigureCanvas(self.canvas)
 
@@ -66,6 +65,8 @@ class AnimationWidget(QWidget):
         hbox.addWidget(self.stop_button)
         vbox.addLayout(hbox)
         self.setLayout(vbox)
+
+
 
 
 
