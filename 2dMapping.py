@@ -8,7 +8,6 @@ import matplotlib.animation as animation
 import random
 import matplotlib.pyplot as plt
 
-
 class MyMplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
@@ -39,7 +38,24 @@ class AnimationWidget(QWidget):
     def __init__(self):
         QMainWindow.__init__(self)
         vbox = QVBoxLayout()
-        self.canvas = MyMplCanvas(self, width=10, height=8, dpi=100)
+        
+        ang, dist = file_read("lidar01.csv")
+        ox = np.sin(ang) * dist
+        oy = np.cos(ang) * dist
+
+
+        self.fig = plt.figure(figsize=(6, 10))
+
+        plt.plot([oy, np.zeros(np.size(oy))], [ox, np.zeros(np.size(oy))], "ro-")  # lines from 0,0 to the
+        plt.axis("equal")
+        bottom, top = plt.ylim()  # return the current ylim
+        plt.ylim((top, bottom))  # rescale y axis, to match the grid orientation
+        plt.grid(True)
+     #   plt.show()
+
+        self.canvas = FigureCanvas(self.canvas)
+
+      #  self.canvas = MyMplCanvas(self, width=10, height=8, dpi=100)
         vbox.addWidget(self.canvas)
         hbox = QHBoxLayout()
         self.start_button = QPushButton("start", self)
@@ -51,21 +67,15 @@ class AnimationWidget(QWidget):
         vbox.addLayout(hbox)
         self.setLayout(vbox)
 
-        ang, dist = file_read("lidar01.csv")
-        ox = np.sin(ang) * dist
-        oy = np.cos(ang) * dist
 
-        plt.figure(figsize=(6, 10))
-        plt.plot([oy, np.zeros(np.size(oy))], [ox, np.zeros(np.size(oy))], "ro-")  # lines from 0,0 to the
-        plt.axis("equal")
-        bottom, top = plt.ylim()  # return the current ylim
-        plt.ylim((top, bottom))  # rescale y axis, to match the grid orientation
-        plt.grid(True)
-        plt.show()
 
-        self.x = np.arange(50)
-        self.y = np.ones(50, dtype=np.float64) * np.nan
-        self.line, = self.canvas.axes.plot(self.x, self.y, animated=True, lw=2)
+
+
+
+        #   self.x = np.arange(50)
+        #   self.y = np.ones(50, dtype=np.float64) * np.nan
+      #  self.line, = self.canvas.axes.plot(self.x, self.y, animated=True, lw=2)
+
 
     def update_line(self, i):
         y = random.randint(0, 1024)
